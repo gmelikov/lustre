@@ -87,7 +87,7 @@ static struct ll_sb_info *ll_init_sbi(void)
 
         si_meminfo(&si);
         pages = si.totalram - si.totalhigh;
-	lru_page_max = pages / 2;
+	lru_page_max = pages; // pages / 2;
 
 	/* initialize ll_cache data */
 	sbi->ll_cache = cl_cache_init(lru_page_max);
