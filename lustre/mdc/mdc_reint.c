@@ -471,9 +471,9 @@ int mdc_file_resync(struct obd_export *exp, struct md_op_data *op_data)
 	rec->rs_fid	= op_data->op_fid1;
 	rec->rs_bias	= op_data->op_bias;
 
-	lock = ldlm_handle2lock(&op_data->op_handle);
+	lock = ldlm_handle2lock(&op_data->op_open_handle);
 	if (lock != NULL) {
-		rec->rs_handle = lock->l_remote_handle;
+		rec->rs_open_handle = lock->l_remote_handle;
 		LDLM_LOCK_PUT(lock);
 	}
 
