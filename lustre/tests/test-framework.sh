@@ -8561,8 +8561,12 @@ changelog_register() {
 	for M in $(seq $MDSCOUNT); do
 		local facet=mds$M
 		local mdt="$(facet_svc $facet)"
+		local cl_mask
+
+		cl_mask=$(do_facet $facet $LCTL get_param \
+			     mdd.${mdt}.changelog_mask -n)
 		stack_trap "do_facet $facet $LCTL \
-			set_param mdd.$mdt.changelog_mask=-hsm" EXIT
+			set_param mdd.$mdt.changelog_mask=\'$cl_mask\' -n" EXIT
 		do_facet $facet $LCTL set_param mdd.$mdt.changelog_mask=+hsm ||
 			error "$mdt: changelog_mask=+hsm failed: $?"
 
@@ -8682,6 +8686,14 @@ changelog_extract_field() {
 	changelog_dump | gawk "/$cltype.*$file$/ {
 		print gensub(/^.* "$identifier'(\[[^\]]*\]).*$/,"\\1",1)}' |
 		tail -1
+}
+
+changelog_get_entry() {
+	local mdt=${MDT[$1]}
+	local cltype=$2
+	local fid=$3
+
+	$LFS changelog $mdt | awk "/$cltype/ && /t=\[$fid\]/ {print}"
 }
 
 restore_layout() {
