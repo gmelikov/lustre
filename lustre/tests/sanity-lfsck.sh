@@ -45,11 +45,11 @@ OSTSIZE=100000
 [ $(facet_fstype ost1) == zfs ] && OSTSIZE=300000
 
 # no need too many OSTs, to reduce the format/start/stop overhead
-cleanupall
 [ $OSTCOUNT -gt 4 ] && OSTCOUNT=4
 
 # build up a clean test environment.
-REFORMAT="yes" check_and_setup_lustre
+formatall
+setupall
 
 [[ $(lustre_version_code $SINGLEMDS) -le $(version_code 2.4.90) ]] &&
 	ALWAYS_EXCEPT="$ALWAYS_EXCEPT 2c"
@@ -5169,8 +5169,7 @@ OSTSIZE=${SAVED_OSTSIZE}
 OSTCOUNT=${SAVED_OSTCOUNT}
 
 # cleanup the system at last
-REFORMAT="yes" cleanup_and_setup_lustre
+formatall
 
 complete $SECONDS
-check_and_cleanup_lustre
 exit_status

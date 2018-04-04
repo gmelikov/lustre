@@ -183,5 +183,4 @@ run_test smoke "lst regression test"
 
 complete $SECONDS
 _restore_mount
-check_and_cleanup_lustre
 exit_status

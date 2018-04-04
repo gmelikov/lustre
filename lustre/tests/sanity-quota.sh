@@ -2607,8 +2607,10 @@ test_35() {
 	fi
 
 	log "Restart..."
-	stopall
-	setupall
+	local ORIG_REFORMAT=$REFORMAT
+	REFORMAT=""
+	cleanup_and_setup_lustre
+	REFORMAT=$ORIG_REFORMAT
 	quota_init
 
 	echo "Verify disk usage after restart"
