@@ -137,7 +137,12 @@ static int ll_releasepage(struct page *vmpage, RELEASEPAGE_ARG_TYPE gfp_mask)
 	env = cl_env_percpu_get();
 	LASSERT(!IS_ERR(env));
 
-	if (!cl_page_in_use(page)) {
+	/* we must not delete the cl_page if the vmpage is in use, otherwise we
+	 * disconnect the vmpage from Lustre while it's still alive(!), which
+	 * means we won't find it to discard on lock cancellation.
+	 */
+	if (!cl_page_in_use(page) &&
+	    !(page_count(vmpage) - page_mapcount(vmpage) > 2)) {
 		result = 1;
 		cl_page_delete(env, page);
 	}
